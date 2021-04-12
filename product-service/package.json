@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "gen:swagger": "aws apigateway get-export --parameters extensions='apigateway' --region us-east-1 --rest-api-id a0gy9b4tbj --stage-name dev --export-type swagger swagger.json"
   },
   "keywords": [],
   "author": "",
