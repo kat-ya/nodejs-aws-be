@@ -8,3 +8,8 @@ CREATE TABLE IF NOT EXISTS stocks (
   count INTEGER,
   FOREIGN KEY ("product_id") REFERENCES "products" ("id")
 );
+
+ALTER TABLE
+  stocks
+ADD
+  CONSTRAINT stock_nonnegative CHECK (count >= 0);

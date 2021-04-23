@@ -11,3 +11,8 @@ CREATE TABLE IF NOT EXISTS products (
   description TEXT,
   price INTEGER
 );
+
+ALTER TABLE
+  products
+ADD
+  CONSTRAINT price_non_negative CHECK (price > 0);
