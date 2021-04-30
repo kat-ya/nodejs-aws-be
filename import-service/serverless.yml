@@ -1,0 +1,36 @@
+service: import-service
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+
+  stage: dev
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+      Resource: "arn:aws:s3:::rs-app-import-service"
+
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    events:
+      - http:
+          path: /import
+          method: get
+          cors: true
+          request:
+            querystrings:
+              name: true
+  importFileParser:
+    handler: handler.importFileParser
+    events:
+       - s3:
+          bucket: rs-app-import-service
+          existing: true
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
