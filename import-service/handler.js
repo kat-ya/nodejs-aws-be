@@ -47,11 +47,11 @@ exports.importFileParser = async (event) => {
     const s3 = new aws.S3();
 
     const result = await Promise.all(
-      event.Records.filter((record) => record.s3).map((s3) => {
+      event.Records.filter((record) => record.s3).map((record) => {
         const {
           bucket: { name: bucketName },
           object: { key },
-        } = s3;
+        } = record.s3;
 
         const params = {
           Bucket: bucketName,
