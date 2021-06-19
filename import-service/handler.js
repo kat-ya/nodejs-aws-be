@@ -1,6 +1,7 @@
 "use strict";
 const aws = require("aws-sdk");
 const csv = require("csv-parser");
+const flatten = require("lodash/flatten");
 
 exports.importProductsFile = async (event) => {
   try {
@@ -42,11 +43,10 @@ exports.importProductsFile = async (event) => {
 
 exports.importFileParser = async (event) => {
   try {
-    console.log(event);
-
     const s3 = new aws.S3();
+    const sqs = new aws.SQS();
 
-    const result = await Promise.all(
+    const productList = await Promise.all(
       event.Records.filter((record) => record.s3).map((record) => {
         const {
           bucket: { name: bucketName },
@@ -57,12 +57,20 @@ exports.importFileParser = async (event) => {
           Bucket: bucketName,
           Key: key,
         };
-        console.log(params);
         return getCSVObject(params);
       })
+    ).then(flatten);
+
+    const sqsResponseList = productList.map((row) =>
+      sqs
+        .sendMessage({
+          QueueUrl: process.env.SQS_URL,
+          MessageBody: JSON.stringify(row),
+        })
+        .promise()
     );
 
-    console.log(result);
+    const result = await Promise.all(sqsResponseList);
 
     return {
       statusCode: 200,

@@ -6,13 +6,28 @@ provider:
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
 
+  environment:
+    SQS_URL:
+      Ref: SQSQueue
+
   stage: dev
   region: us-east-1
   iamRoleStatements:
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
         - s3:PutObject
       Resource: "arn:aws:s3:::rs-app-import-service"
+    - Effect: "Allow"
+      Action: "sqs:*"
+      Resource:
+        - Fn::GetAtt: [ SQSQueue, Arn ]
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
 
 functions:
   importProductsFile:
