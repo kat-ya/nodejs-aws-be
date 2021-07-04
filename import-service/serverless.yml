@@ -1,6 +1,9 @@
 service: import-service
 frameworkVersion: '2'
 
+plugins:
+  - serverless-pseudo-parameters
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -40,6 +43,12 @@ functions:
           request:
             querystrings:
               name: true
+          authorizer:
+            name: basicAuthorizer
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:authorization-service-dev-basicAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   importFileParser:
     handler: handler.importFileParser
     events:
