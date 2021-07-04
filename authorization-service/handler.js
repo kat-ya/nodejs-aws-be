@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports.basicAuthorizer = async (event, context, cb) => {
-
   const validUserName = process.env.USER_ID;
   const validUserPassword = process.env.PASSWORD;
 
