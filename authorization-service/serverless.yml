@@ -1,0 +1,18 @@
+service: authorization-service
+frameworkVersion: '2'
+
+plugins:
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+
+  environment:
+    USER_ID: ${env:USER_ID}
+    PASSWORD: ${env:PASSWORD}
+
+functions:
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
